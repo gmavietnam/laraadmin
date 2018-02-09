@@ -261,7 +261,7 @@ class __controller_class_name__ extends Controller
 				
 				if(Module::hasAccess("__module_name__", "delete")) {
 					$output .= Form::open(['route' => [config('laraadmin.adminRoute') . '.__route_resource__.destroy', $data->data[$i][0]], 'method' => 'delete', 'style'=>'display:inline']);
-					$output .= ' <a class="btn btn-danger btn-xs row_delete" data-name="'.  $data->data[$i][0]] .'" href="#" style="display:inline;padding:2px 5px 3px 5px;" name="delete_modal"><i class="fa fa-times"></i></a>';
+					$output .= ' <a class="btn btn-danger btn-xs row_delete" data-name="'.  $data->data[$i][0] .'" href="#" style="display:inline;padding:2px 5px 3px 5px;" name="delete_modal"><i class="fa fa-times"></i></a>';
 					$output .= Form::close();
 				}
 				$data->data[$i][] = (string)$output;
