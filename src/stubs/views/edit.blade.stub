@@ -8,7 +8,7 @@
 @section("section_url", url(config('laraadmin.adminRoute') . '/__db_table_name__'))
 @section("sub_section", trans('view.edit'))
 
-@section("htmlheader_title", "__module_name_2__ Edit : ".$__singular_var__->$view_col)
+@section("htmlheader_title", trans('view.edit') .' : '.$__singular_var__->$view_col)
 
 @section("main-content")
 

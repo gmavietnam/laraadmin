@@ -11,6 +11,7 @@
 		'listing'	=> 'Danh sách',
 		'search'	=> 'Tìm kiếm',
 		'actions'	=> 'Thao tác',
+		'general_info' => 'Thông tin chung',
 		'created_at' => 'Ngày tạo',
 		'updated_at'	=> 'Ngày cập nhật',
 		'drop_files_to_upload' => 'Giữ và thả file vào để upload',
