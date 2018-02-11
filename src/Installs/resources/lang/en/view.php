@@ -10,7 +10,6 @@
 		'listing'   => 'Listing',
 		'search'	=> 'Search',
 		'actions'	=> 'Actions',
-		'general_info' => 'General Info',
 		'created_at' => 'Created At',
 		'updated_at'	=> 'Updated At',
 		'drop_files_to_upload' => 'Drop files here to upload',

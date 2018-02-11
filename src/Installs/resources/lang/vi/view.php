@@ -17,7 +17,6 @@
 		'drop_files_to_upload' => 'Giữ và thả file vào để upload',
 		'select_file' => 'Chọn tập tin',
 		'is_public' => 'Hiển thị với mọi người',
-		'general_info' => 'Tổng quát',
 		'language_all' => 'Tất cả',
 		'delete_confirm_title' => 'Xác nhận xóa',
 		'delete_confirm' => 'Bạn có chắc là muốn xóa không?',
