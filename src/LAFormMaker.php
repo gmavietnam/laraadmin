@@ -208,21 +208,28 @@ class LAFormMaker
 						$default_val = $row->$field_name;
 					}
 					
+					$tmp_popup_vals = $popup_vals;
+					
 					if($popup_vals != "") {
-						$tmp_popup_vals = $popup_vals;
+						
 						$popup_vals = LAFormMaker::process_values($popup_vals, $lang_data, $filter_expressions );
 						// echo "<pre>";
 						// var_dump($module);
 						if(!empty($default_val)){
 							if(!empty($lang['curr_from'])){
 								$currFrom = $lang['curr_from'];
-								$default_val = LAFormMaker::mapDataDropdown($tmp_popup_vals, $lang_data['lang'], 
-																			$module->model,$currFrom, $field_name);
+								$mapData = LAFormMaker::mapDataDropdown($tmp_popup_vals, $lang_data['lang'], 
+																		$module->model,$currFrom, $field_name);
+								//fix: if don't have on metadata language
+								if ($mapData != false) {
+									$default_val = $mapData;
+								}
 							}
 						}
 					} else {
 						$popup_vals = array();
 					}
+
 					$out .= Form::select($field_name, $popup_vals, $default_val, $params);
 					break;
 				case 'Email':
