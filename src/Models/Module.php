@@ -946,7 +946,10 @@ class Module extends Model
 				$row->id = $old_row->id;
 			}
 			$row = Module::processDBRow($module, $request, $row);
-			$row->lang = $request->get('lang');
+			if (!empty($request->get('lang'))) {
+				$row->lang = $request->get('lang');
+			}
+			
 
 			$row->save();
 
@@ -1026,6 +1029,9 @@ class Module extends Model
 			//$row = new $module_path;
 			$row = $model::find($id);
 			$row = Module::processDBRow($module, $request, $row);
+			if (!empty($request->get('lang'))) {
+				$row->lang = $request->get('lang');
+			}
 			$row->save();
 			return $row->id;
 		} else {
