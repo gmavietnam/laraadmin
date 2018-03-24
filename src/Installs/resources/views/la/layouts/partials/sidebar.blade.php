@@ -8,7 +8,7 @@
         @if (! Auth::guest())
             <div class="user-panel">
                 <div class="pull-left image">
-                    <img src="{{ Gravatar::fallback(asset('la-assets/img/user2-160x160.jpg'))->get(Auth::user()->email) }}" class="img-circle" alt="User Image" />
+                    <img src="{{ asset('la-assets/img/avatar_default.png')}}" class="img-circle" alt="User Image" />
                 </div>
                 <div class="pull-left info">
                     <p>{{ Auth::user()->name }}</p>
@@ -35,16 +35,36 @@
         <ul class="sidebar-menu">
             <li class="header">MODULES</li>
             <!-- Optionally, you can add icons to the links -->
-            <li><a href="{{ url(config('laraadmin.adminRoute')) }}"><i class='fa fa-home'></i> <span>Dashboard</span></a></li>
+            <li><a href="{{ url(config('laraadmin.adminRoute')) }}"><i class='fa fa-home'></i> <span>{{trans('view.dashboard')}}</span></a></li>
             <?php
             $menuItems = Dwij\Laraadmin\Models\Menu::where("parent", 0)->orderBy('hierarchy', 'asc')->get();
+            
+            // echo "<pre>";
+            // var_dump($menuItems->toArray());
             ?>
             @foreach ($menuItems as $menu)
+                <?php
+                    $childrens = \Dwij\Laraadmin\Models\Menu::where("parent", $menu->id)->orderBy('hierarchy', 'asc')->get();
+                    $countMenuAccess = 0;
+                    $countChildren = count($childrens);
+                    if($countChildren > 0) {
+                        foreach($childrens as $children) {
+                            //dd($children);
+                            if (Module::hasAccess($children->name, "view")) {
+                                $countMenuAccess += 1;
+                            }
+                        }
+                    }
+                    $notPrintMenu = ($countChildren >0 && $countMenuAccess == 0);
+                    
+                ?>
+                @continue($notPrintMenu)
+
                 @if($menu->type == "module")
                     <?php
                     $temp_module_obj = Module::get($menu->name);
                     ?>
-                    @la_access($temp_module_obj->id)
+                    @la_access($temp_module_obj->name ,"view")
 						@if(isset($module->id) && $module->name == $menu->name)
                         	<?php echo LAHelper::print_menu($menu ,true); ?>
 						@else
@@ -52,7 +72,9 @@
 						@endif
                     @endla_access
                 @else
-                    <?php echo LAHelper::print_menu($menu); ?>
+                    <?php 
+                    //dd ($menu);
+                    echo LAHelper::print_menu($menu); ?>
                 @endif
             @endforeach
             <!-- LAMenus -->
