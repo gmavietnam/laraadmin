@@ -6,6 +6,8 @@ use DB;
 use Log;
 
 use Dwij\Laraadmin\Models\Module;
+use Zizaco\Entrust\EntrustFacade as Entrust;
+
 
 class LAHelper
 {
@@ -302,7 +304,10 @@ class LAHelper
 			$str .= '<ul class="treeview-menu">';
 			foreach($childrens as $children) {
 				if ($children->type == "module" && Module::hasAccess($children->name, "view")) {
-					$str .= LAHelper::print_menu($children);
+					if ($children->name != "Employees" || 
+							($children->name == "Employees" && Entrust::hasRole('SUPER_ADMIN'))) {
+						$str .= LAHelper::print_menu($children);
+					}
 				} else if ($children->type == "custom") {
 					$split_url = explode("/", $children->url);
 					if ($split_url > 0 ) {
@@ -317,10 +322,6 @@ class LAHelper
 		}
 
 		$str .= '</li>';
-
-		if ($countMenuAccess == 0) {
-			//$str = "";
-		}
 		
 		return $str;
 	}

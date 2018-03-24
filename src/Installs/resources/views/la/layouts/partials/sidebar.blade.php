@@ -51,7 +51,10 @@
                         foreach($childrens as $children) {
                             //dd($children);
                             if (Module::hasAccess($children->name, "view")) {
-                                $countMenuAccess += 1;
+                                if ($children->name != "Employees" || 
+							        ($children->name == "Employees" && Entrust::hasRole('SUPER_ADMIN'))) {
+                                    $countMenuAccess += 1;
+                                }   
                             }
                         }
                     }
