@@ -11,4 +11,13 @@ use Illuminate\Foundation\Auth\Access\AuthorizesResources;
 class Controller extends BaseController
 {
     use AuthorizesRequests, AuthorizesResources, DispatchesJobs, ValidatesRequests;
+
+     /**
+     * goto not access page
+     */
+    protected function redirectNotAccess($module) {
+        return view('errors.access', [
+            'module' => $module
+        ]);
+    }
 }

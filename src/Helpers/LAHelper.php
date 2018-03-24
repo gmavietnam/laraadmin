@@ -295,14 +295,27 @@ class LAHelper
 		
 		$str = '<li'.$treeview.' '.$active_str.'><a href="'.url(config("laraadmin.adminRoute") . '/' . $menu->url ) .'"><i class="fa '.$menu->icon.'"></i> <span>'.trans('menu.'.LAHelper::real_module_name($menu->name)).'</span> '.$subviewSign.'</a>';
 		
+		$countMenuAccess = 0;
+
 		if(count($childrens)) {
+
 			$str .= '<ul class="treeview-menu">';
 			foreach($childrens as $children) {
-				$str .= LAHelper::print_menu($children);
+				//dd($children);
+				if (Module::hasAccess($children->name, "view")) {
+					$str .= LAHelper::print_menu($children);
+				}
+				$countMenuAccess +=1;
 			}
 			$str .= '</ul>';
 		}
+
 		$str .= '</li>';
+
+		if ($countMenuAccess == 0) {
+			//$str = "";
+		}
+		
 		return $str;
 	}
 

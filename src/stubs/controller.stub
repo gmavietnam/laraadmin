@@ -98,11 +98,19 @@ class __controller_class_name__ extends Controller
 		if(Module::hasAccess("__module_name__", "create")) {
 		
 			$rules = Module::validateRules("__module_name__", $request);
+
+			$result = $this->modify_request_before_validate($request);
 			
 			$validator = Validator::make($request->all(), $rules);
 			
 			if ($validator->fails()) {
 				return redirect()->back()->withErrors($validator)->withInput();
+			}
+
+			$result = $this->modify_request_after_validate($request);
+
+			if ($result != null) {
+				return $result;
 			}
 			
 			$insert_id = Module::insert("__module_name__", $request);
@@ -189,11 +197,19 @@ class __controller_class_name__ extends Controller
 		if(Module::hasAccess("__module_name__", "edit")) {
 			
 			$rules = Module::validateRules("__module_name__", $request, true);
+
+			$result = $this->modify_request_before_validate($request);
 			
 			$validator = Validator::make($request->all(), $rules);
-			
+
 			if ($validator->fails()) {
 				return redirect()->back()->withErrors($validator)->withInput();;
+			}
+
+			$result = $this->modify_request_after_validate($request, false);
+			
+			if ($result != null) {
+				return $result;
 			}
 			
 			$insert_id = Module::updateRow("__module_name__", $request, $id);
@@ -233,41 +249,72 @@ class __controller_class_name__ extends Controller
 	 */
 	public function dtajax(Request $request)
 	{
-		$values = DB::table('__db_table_name__')->select($this->listing_cols)->whereNull('deleted_at');
-		$out = Datatables::of($values)->make();
+		$values = __module_name_2__::search($request);
+
+		if ($request->get("languages_filter") == ""){
+			$langAndFrom = LanguageTransportor::getFromAndLang();
+			$values = $values->where("lang", $langAndFrom['lang']);
+		}
+		$values = $values->get();
+
+		$out = Datatables::of($values)->make(true);
 		$data = $out->getData();
 
-		$fields_popup = ModuleFields::getModuleFields('__module_name__');
+		$list = array();
+        if (!empty($data->data)) {
+            foreach ($data->data as $key => $row) {
+                $list[] = array(
+                    'id' => $row->_id,
+                    'name' => exists_field($row,'name')
+                );
+            }
+        }
+
+		$data->data = array();
+        foreach ($list as $row) {
+            $item = array(
+                $row['id'],
+                '<a href="'.url(config('laraadmin.adminRoute').'/__route_resource__/'.$row['id']).'">'.$row['name'].'</a>'
+            );
+
+            if ($this->show_action) {
+                $output = '';
+                if (Module::hasAccess('__module_name__', 'edit')) {
+                    $output .= '<a href="'.url(config('laraadmin.adminRoute').'/__route_resource__/'.$row['id'].'/edit').'" class="btn btn-warning btn-xs" style="display:inline;padding:2px 5px 3px 5px;"><i class="fa fa-edit"></i></a>';
+                }
+
+                if (Module::hasAccess('__module_name__', 'delete')) {
+                    $output .= Form::open(['route' => [config('laraadmin.adminRoute').'.__route_resource__.destroy', $row['id']], 'method' => 'delete', 'style' => 'display:inline']);
+                    $output .= ' <a class="btn btn-danger btn-xs row_delete" data-name="'.  $row['name'] .'" href="#" style="display:inline;padding:2px 5px 3px 5px;" name="delete_modal"><i class="fa fa-times"></i></a>';
+                    $output .= Form::close();
+                }
+
+                $item[] = (string) $output;
+            }
+            $data->data[] = $item;
+        }
 		
-		for($i=0; $i < count($data->data); $i++) {
-			for ($j=0; $j < count($this->listing_cols); $j++) { 
-				$col = $this->listing_cols[$j];
-				if($fields_popup[$col] != null && starts_with($fields_popup[$col]->popup_vals, "@")) {
-					$data->data[$i][$j] = ModuleFields::getFieldValue($fields_popup[$col], $data->data[$i][$j]);
-				}
-				if($col == $this->view_col) {
-					$data->data[$i][$j] = '<a href="'.url(config('laraadmin.adminRoute') . '/__route_resource__/'.$data->data[$i][0]).'">'.$data->data[$i][$j].'</a>';
-				}
-				// else if($col == "author") {
-				//    $data->data[$i][$j];
-				// }
-			}
-			
-			if($this->show_action) {
-				$output = '';
-				if(Module::hasAccess("__module_name__", "edit")) {
-					$output .= '<a href="'.url(config('laraadmin.adminRoute') . '/__route_resource__/'.$data->data[$i][0].'/edit').'" class="btn btn-warning btn-xs" style="display:inline;padding:2px 5px 3px 5px;"><i class="fa fa-edit"></i></a>';
-				}
-				
-				if(Module::hasAccess("__module_name__", "delete")) {
-					$output .= Form::open(['route' => [config('laraadmin.adminRoute') . '.__route_resource__.destroy', $data->data[$i][0]], 'method' => 'delete', 'style'=>'display:inline']);
-					$output .= ' <a class="btn btn-danger btn-xs row_delete" data-name="'.  $data->data[$i][0] .'" href="#" style="display:inline;padding:2px 5px 3px 5px;" name="delete_modal"><i class="fa fa-times"></i></a>';
-					$output .= Form::close();
-				}
-				$data->data[$i][] = (string)$output;
-			}
-		}
 		$out->setData($data);
 		return $out;
+	}
+
+	/**
+	 * modify 
+	 *
+	 * @return
+	 */
+	private function modify_request_before_validate(Request $request, $is_insert = true) {
+
+		return null;
+	}
+
+	/**
+	 * modify 
+	 *
+	 * @return
+	 */
+	private function modify_request_after_validate(Request $request, $is_insert = true) {
+
+		return null;
 	}
 }

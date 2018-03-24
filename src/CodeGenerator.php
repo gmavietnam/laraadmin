@@ -31,7 +31,9 @@ class CodeGenerator
         // Listing columns
         $listing_cols = "";
         foreach ($config->module->fields as $field) {
-            $listing_cols .= "'".$field['colname']."', ";
+            if ($field['colname'] != "lang") {
+                $listing_cols .= "'".$field['colname']."', ";
+            }
         }
         $listing_cols = trim($listing_cols, ", ");
 
