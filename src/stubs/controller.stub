@@ -56,7 +56,7 @@ class __controller_class_name__ extends Controller
 				'module' => $module
 			]);
 		} else {
-            return redirect(config('laraadmin.adminRoute')."/");
+            return $this->redirectNotAccess($module);
         }
 	}
 
@@ -83,7 +83,7 @@ class __controller_class_name__ extends Controller
 				'view_col' => $this->view_col,
 			])->with('__singular_var__', $__singular_var__);
 		} else {
-			return redirect(config('laraadmin.adminRoute')."/");
+			 return $this->redirectNotAccess(Module::get('__module_name__'));
 		}
 	}
 
@@ -118,7 +118,7 @@ class __controller_class_name__ extends Controller
 			return redirect()->route(config('laraadmin.adminRoute') . '.__route_resource__.index');
 			
 		} else {
-			return redirect(config('laraadmin.adminRoute')."/");
+			return $this->redirectNotAccess(Module::get('__module_name__'));
 		}
 	}
 
@@ -151,7 +151,7 @@ class __controller_class_name__ extends Controller
 				]);
 			}
 		} else {
-			return redirect(config('laraadmin.adminRoute')."/");
+			return $this->redirectNotAccess(Module::get('__module_name__'));
 		}
 	}
 
@@ -181,7 +181,7 @@ class __controller_class_name__ extends Controller
 				]);
 			}
 		} else {
-			return redirect(config('laraadmin.adminRoute')."/");
+			return $this->redirectNotAccess(Module::get('__module_name__'));
 		}
 	}
 
@@ -217,7 +217,7 @@ class __controller_class_name__ extends Controller
 			return redirect()->route(config('laraadmin.adminRoute') . '.__route_resource__.index');
 			
 		} else {
-			return redirect(config('laraadmin.adminRoute')."/");
+			return $this->redirectNotAccess(Module::get('__module_name__'));
 		}
 	}
 
@@ -238,7 +238,7 @@ class __controller_class_name__ extends Controller
 			// Redirecting to index() method
 			return redirect()->route(config('laraadmin.adminRoute') . '.__route_resource__.index');
 		} else {
-			return redirect(config('laraadmin.adminRoute')."/");
+			return $this->redirectNotAccess(Module::get('__module_name__'));
 		}
 	}
 	

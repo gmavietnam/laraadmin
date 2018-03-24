@@ -16,6 +16,8 @@ class Controller extends BaseController
      * goto not access page
      */
     protected function redirectNotAccess($module) {
+        $module = translate_module($module);
+        
         return view('errors.access', [
             'module' => $module
         ]);
