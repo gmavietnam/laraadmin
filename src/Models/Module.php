@@ -860,12 +860,23 @@ class Module extends Model
 						}
 					}
 
-					$result = $model::whereNull('deleted_at');
+					$result = $result->whereNull('deleted_at');
 					$result = apply_app_filters($module_name, $result);
 					$result = $result->get();
 
 				} else {
 					$result = $model::whereNull('deleted_at');
+
+					if (count($filter) > 0) {
+						foreach ($filter as $ex) {
+							if (count($ex) > 1) {
+								$filterCol = trim($ex[0]);
+								$filterValue = trim($ex[1]);
+								$result = $result->where($filterCol, $filterValue);
+							}
+						}
+					}
+					
 					$result = apply_app_filters($module_name, $result);
 					$result = $result->get();
 					//$result = $model::all()->whereNull('deleted_at');
