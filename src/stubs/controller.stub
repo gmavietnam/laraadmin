@@ -27,16 +27,18 @@ class __controller_class_name__ extends Controller
 	public $show_action = true;
 	public $view_col = '__view_column__';
 	public $listing_cols = ['id', __listing_cols__];
+
+	public $module_name = "__module_name__";
 	
 	public function __construct() {
 		// Field Access of Listing Columns
 		if(\Dwij\Laraadmin\Helpers\LAHelper::laravel_ver() == 5.3) {
 			$this->middleware(function ($request, $next) {
-				$this->listing_cols = ModuleFields::listingColumnAccessScan('__module_name__', $this->listing_cols);
+				$this->listing_cols = ModuleFields::listingColumnAccessScan($this->module_name, $this->listing_cols);
 				return $next($request);
 			});
 		} else {
-			$this->listing_cols = ModuleFields::listingColumnAccessScan('__module_name__', $this->listing_cols);
+			$this->listing_cols = ModuleFields::listingColumnAccessScan($this->module_name, $this->listing_cols);
 		}
 	}
 	
@@ -47,7 +49,7 @@ class __controller_class_name__ extends Controller
 	 */
 	public function index()
 	{
-		$module = Module::get('__module_name__');
+		$module = Module::get($this->module_name);
 
 		if(Module::hasAccess($module->id)) {
 			return View('la.__view_folder__.index', [
@@ -67,13 +69,13 @@ class __controller_class_name__ extends Controller
 	 */
 	public function create($id)
 	{
-		if(Module::hasAccess("__module_name__", "create")) {			
+		if(Module::hasAccess($this->module_name, "create")) {			
 			$__singular_var__ = new __model_name__();
-			$module = Module::get('__module_name__');
+			$module = Module::get($this->module_name);
 			$module = translate_module($module);
 			
 			if ($id != 0 ) {
-				$__singular_var__  = Module::copyDBRow('__module_name__', $id);
+				$__singular_var__  = Module::copyDBRow($this->module_name, $id);
 			}
 
 			$module->row = $__singular_var__;
@@ -83,7 +85,7 @@ class __controller_class_name__ extends Controller
 				'view_col' => $this->view_col,
 			])->with('__singular_var__', $__singular_var__);
 		} else {
-			 return $this->redirectNotAccess(Module::get('__module_name__'));
+			 return $this->redirectNotAccess(Module::get($this->module_name));
 		}
 	}
 
@@ -95,9 +97,9 @@ class __controller_class_name__ extends Controller
 	 */
 	public function store(Request $request)
 	{
-		if(Module::hasAccess("__module_name__", "create")) {
+		if(Module::hasAccess($this->module_name, "create")) {
 		
-			$rules = Module::validateRules("__module_name__", $request);
+			$rules = Module::validateRules($this->module_name, $request);
 
 			$result = $this->modify_request_before_validate($request);
 			
@@ -113,12 +115,12 @@ class __controller_class_name__ extends Controller
 				return $result;
 			}
 			
-			$insert_id = Module::insert("__module_name__", $request);
+			$insert_id = Module::insert($this->module_name, $request);
 			
 			return redirect()->route(config('laraadmin.adminRoute') . '.__route_resource__.index');
 			
 		} else {
-			return $this->redirectNotAccess(Module::get('__module_name__'));
+			return $this->redirectNotAccess(Module::get($this->module_name));
 		}
 	}
 
@@ -130,11 +132,11 @@ class __controller_class_name__ extends Controller
 	 */
 	public function show($id)
 	{
-		if(Module::hasAccess("__module_name__", "view")) {
+		if(Module::hasAccess($this->module_name, "view")) {
 			
 			$__singular_var__ = __model_name__::find($id);
 			if(isset($__singular_var__->id)) {
-				$module = Module::get('__module_name__');
+				$module = Module::get($this->module_name);
 
 				$module->row = $__singular_var__;
 				
@@ -151,7 +153,7 @@ class __controller_class_name__ extends Controller
 				]);
 			}
 		} else {
-			return $this->redirectNotAccess(Module::get('__module_name__'));
+			return $this->redirectNotAccess(Module::get($this->module_name));
 		}
 	}
 
@@ -163,10 +165,10 @@ class __controller_class_name__ extends Controller
 	 */
 	public function edit($id)
 	{
-		if(Module::hasAccess("__module_name__", "edit")) {			
+		if(Module::hasAccess($this->module_name, "edit")) {			
 			$__singular_var__ = __model_name__::find($id);
 			if(isset($__singular_var__->id)) {	
-				$module = Module::get('__module_name__');
+				$module = Module::get($this->module_name);
 				
 				$module->row = $__singular_var__;
 				
@@ -181,7 +183,7 @@ class __controller_class_name__ extends Controller
 				]);
 			}
 		} else {
-			return $this->redirectNotAccess(Module::get('__module_name__'));
+			return $this->redirectNotAccess(Module::get($this->module_name));
 		}
 	}
 
@@ -194,9 +196,9 @@ class __controller_class_name__ extends Controller
 	 */
 	public function update(Request $request, $id)
 	{
-		if(Module::hasAccess("__module_name__", "edit")) {
+		if(Module::hasAccess($this->module_name, "edit")) {
 			
-			$rules = Module::validateRules("__module_name__", $request, true);
+			$rules = Module::validateRules($this->module_name, $request, true);
 
 			$result = $this->modify_request_before_validate($request);
 			
@@ -212,12 +214,12 @@ class __controller_class_name__ extends Controller
 				return $result;
 			}
 			
-			$insert_id = Module::updateRow("__module_name__", $request, $id);
+			$insert_id = Module::updateRow($this->module_name, $request, $id);
 			
 			return redirect()->route(config('laraadmin.adminRoute') . '.__route_resource__.index');
 			
 		} else {
-			return $this->redirectNotAccess(Module::get('__module_name__'));
+			return $this->redirectNotAccess(Module::get($this->module_name));
 		}
 	}
 
@@ -229,16 +231,16 @@ class __controller_class_name__ extends Controller
 	 */
 	public function destroy($id)
 	{
-		if(Module::hasAccess("__module_name__", "delete")) {
+		if(Module::hasAccess($this->module_name, "delete")) {
 			LanguageMeta::where(['content_id' => mongo_id($id),
-			'reference' => '__module_name__'])->delete();
+			'reference' => $this->module_name])->delete();
 
 			__model_name__::find($id)->delete();
 			
 			// Redirecting to index() method
 			return redirect()->route(config('laraadmin.adminRoute') . '.__route_resource__.index');
 		} else {
-			return $this->redirectNotAccess(Module::get('__module_name__'));
+			return $this->redirectNotAccess(Module::get($this->module_name));
 		}
 	}
 	
@@ -279,11 +281,11 @@ class __controller_class_name__ extends Controller
 
             if ($this->show_action) {
                 $output = '';
-                if (Module::hasAccess('__module_name__', 'edit')) {
+                if (Module::hasAccess($this->module_name, 'edit')) {
                     $output .= '<a href="'.url(config('laraadmin.adminRoute').'/__route_resource__/'.$row['id'].'/edit').'" class="btn btn-warning btn-xs" style="display:inline;padding:2px 5px 3px 5px;"><i class="fa fa-edit"></i></a>';
                 }
 
-                if (Module::hasAccess('__module_name__', 'delete')) {
+                if (Module::hasAccess($this->module_name, 'delete')) {
                     $output .= Form::open(['route' => [config('laraadmin.adminRoute').'.__route_resource__.destroy', $row['id']], 'method' => 'delete', 'style' => 'display:inline']);
                     $output .= ' <a class="btn btn-danger btn-xs row_delete" data-name="'.  $row['name'] .'" href="#" style="display:inline;padding:2px 5px 3px 5px;" name="delete_modal"><i class="fa fa-times"></i></a>';
                     $output .= Form::close();
