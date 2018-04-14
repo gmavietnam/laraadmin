@@ -251,7 +251,7 @@ class __controller_class_name__ extends Controller
 	 */
 	public function dtajax(Request $request)
 	{
-		$values = __module_name_2__::search($request);
+		$values = __model_name__::search($request);
 
 		if ($request->get("languages_filter") == ""){
 			$langAndFrom = LanguageTransportor::getFromAndLang();
