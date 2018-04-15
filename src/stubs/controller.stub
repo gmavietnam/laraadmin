@@ -17,6 +17,8 @@ use Collective\Html\FormFacade as Form;
 use Dwij\Laraadmin\Models\Module;
 use Dwij\Laraadmin\Models\ModuleFields;
 
+use App\Role;
+
 use App\Models\__model_name__;
 
 use App\Models\LanguageMeta;
@@ -52,6 +54,10 @@ class __controller_class_name__ extends Controller
 		$module = Module::get($this->module_name);
 
 		if(Module::hasAccess($module->id)) {
+			if(Role::is_super_admin()){
+				$this->listing_cols[] = SHOP_ID_COL;
+			}
+			
 			return View('la.__view_folder__.index', [
 				'show_actions' => $this->show_action,
 				'listing_cols' => $this->listing_cols,
@@ -279,15 +285,19 @@ class __controller_class_name__ extends Controller
                 '<a href="'.url(config('laraadmin.adminRoute').'/__route_resource__/'.$row['id']).'">'.$row['name'].'</a>'
             );
 
+			if (Role::is_super_admin()) {
+				$item[] = parent::getShopName($row[SHOP_ID_COL]);
+			}
+
             if ($this->show_action) {
                 $output = '';
                 if (Module::hasAccess($this->module_name, 'edit')) {
-                    $output .= '<a href="'.url(config('laraadmin.adminRoute').'/__route_resource__/'.$row['id'].'/edit').'" class="btn btn-warning btn-xs" style="display:inline;padding:2px 5px 3px 5px;"><i class="fa fa-edit"></i></a>';
+                    $output .= '<a href="'.url(config('laraadmin.adminRoute').'/__route_resource__/'.$row['id'].'/edit').'" class="btn btn-warning btn-xs show_actions"><i class="fa fa-edit"></i></a>';
                 }
 
                 if (Module::hasAccess($this->module_name, 'delete')) {
                     $output .= Form::open(['route' => [config('laraadmin.adminRoute').'.__route_resource__.destroy', $row['id']], 'method' => 'delete', 'style' => 'display:inline']);
-                    $output .= ' <a class="btn btn-danger btn-xs row_delete" data-name="'.  $row['name'] .'" href="#" style="display:inline;padding:2px 5px 3px 5px;" name="delete_modal"><i class="fa fa-times"></i></a>';
+                    $output .= ' <a class="btn btn-danger btn-xs row_delete show_actions" data-name="'.  $row['name'] .'" href="#" name="delete_modal"><i class="fa fa-times"></i></a>';
                     $output .= Form::close();
                 }
 
