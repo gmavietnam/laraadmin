@@ -288,20 +288,29 @@ class LAHelper
 		$treeview = "";
 		$subviewSign = "";
 		if(count($childrens)) {
-			$treeview = " class=\"treeview\"";
-			$subviewSign = '<i class="fa fa-angle-left pull-right"></i>';
+			$treeview = " class=\"sub-menu\"";
+			//$subviewSign = '<i class="fa fa-angle-left pull-right"></i>';
+			$href="#";
+			$aElement = 'data-ma-action="submenu-toggle"'; 
 		}
+		else
+		{
+			
+			$href=url(config("laraadmin.adminRoute") . '/' . $menu->url ) ;
+			$aElement = ''; 
+		}
+
 		$active_str = '';
 		if($active) {
 			$active_str = 'class="active"';
 		}
 		
-		$str = '<li'.$treeview.' '.$active_str.'><a href="'.url(config("laraadmin.adminRoute") . '/' . $menu->url ) .'"><i class="fa '.$menu->icon.'"></i> <span>'.trans('menu.'.LAHelper::real_module_name($menu->name)).'</span> '.$subviewSign.'</a>';
+		$str = '<li'.$treeview.' '.$active_str.'><a href="'.$href.'" '.$aElement.'><i class="fa '.$menu->icon.'"></i> <span>'.trans('menu.'.LAHelper::real_module_name($menu->name)).'</span> </a>';
 		
 		$countMenuAccess = 0;
 
 		if(count($childrens)) {
-			$str .= '<ul class="treeview-menu">';
+			$str .= '<ul>';
 			foreach($childrens as $children) {
 				if ($children->type == "module" && Module::hasAccess($children->name, "view")) {
 					if ($children->name != "Employees" || 

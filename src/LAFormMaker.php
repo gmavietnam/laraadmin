@@ -49,7 +49,7 @@ class LAFormMaker
 			
 			$field_type = ModuleFieldTypes::find($field_type);
 			
-			$out = '<div class="form-group">';
+			$out = '<div class="form-group"><div class="fg-line">';
 			$required_ast = "";
 			
 			if(!isset($params['class'])) {
@@ -83,6 +83,7 @@ class LAFormMaker
 				$required_ast = "*";
 			}
 			
+			
 			switch ($field_type->name) {
 				case 'Address':
 					$out .= '<label for="'.$field_name.'">'.$label.$required_ast.' :</label>';
@@ -95,8 +96,10 @@ class LAFormMaker
 						$default_val = $row->$field_name;
 					}
 					
-					$params['cols'] = 30;
-					$params['rows'] = 3;
+					// $params['cols'] = 30;
+					$params['rows'] = 1;
+					$params['class'] = 'form-control auto-size';
+
 					$out .= Form::textarea($field_name, $default_val, $params);
 					break;
 				case 'Checkbox':
@@ -152,8 +155,12 @@ class LAFormMaker
 					unset($params['data-rule-maxlength']);
 					// $params['data-rule-date'] = "true";
 					
-					$out .= "<div class='input-group date'>";
+					$out .= "<div class='input-group dtp-container date'>";
+					
+					$params['class'] = 'form-control date-picker';
 					$out .= Form::text($field_name, $dval, $params);
+					
+
 					$out .= "<span class='input-group-addon'><span class='fa fa-calendar'></span></span></div>";
 					// $out .= Form::date($field_name, $default_val, $params);
 					break;
@@ -173,7 +180,8 @@ class LAFormMaker
 					if($default_val != "") {
 						$dval = date("d/m/Y h:i A", strtotime($default_val));
 					}
-					$out .= "<div class='input-group datetime'>";
+					$out .= "<div class='input-group dtp-container datetime'>";
+					$params['class'] = 'form-control date-time-picker';
 					$out .= Form::text($field_name, $dval, $params);
 					$out .= "<span class='input-group-addon'><span class='fa fa-calendar'></span></span></div>";
 					break;
@@ -193,7 +201,7 @@ class LAFormMaker
 					break;
 				case 'Dropdown':
 					$out .= '<label for="'.$field_name.'">'.$label.$required_ast.' :</label>';
-					
+					$out .= '<div class="select">';
 					unset($params['data-rule-maxlength']);
 					$params['data-placeholder'] = $params['placeholder'];
 					unset($params['placeholder']);
@@ -231,6 +239,7 @@ class LAFormMaker
 					}
 
 					$out .= Form::select($field_name, $popup_vals, $default_val, $params);
+					$out .= '</div>';
 					break;
 				case 'Email':
 					$out .= '<label for="'.$field_name.'">'.$label.$required_ast.' :</label>';
@@ -475,13 +484,13 @@ class LAFormMaker
 					if(starts_with($popup_vals, "@")) {
 						//LamLe -- add filter language_data
 						$popup_vals = LAFormMaker::process_values($popup_vals,$lang_data, $filter_expressions);
-						$out .= '<div class="radio">';
+						$out .= '<div class="">';
 						foreach ($popup_vals as $key => $value) {
 							$sel = false;
 							if($default_val != "" && $default_val == $value) {
 								$sel = true;
 							}
-							$out .= '<label>'.(Form::radio($field_name, $key, $sel)).' '.$value.' </label>';
+							$out .= '<label class="radio radio-inline m-r-20">'.(Form::radio($field_name, $key, $sel)).' <i class="input-helper"></i> '.$value.' </label>';
 						}
 						$out .= '</div>';
 						break;
@@ -491,13 +500,13 @@ class LAFormMaker
 						} else {
 							$popup_vals = array();
 						}
-						$out .= '<div class="radio">';
+						$out .= '<div class="">';
 						foreach ($popup_vals as $value) {
 							$sel = false;
 							if($default_val != "" && $default_val == $value) {
 								$sel = true;
 							}
-							$out .= '<label>'.(Form::radio($field_name, $value, $sel)).' '.$value.' </label>';
+							$out .= '<label class="radio radio-inline m-r-20">'.(Form::radio($field_name, $value, $sel)).' <i class="input-helper"></i> '.$value.' </label>';
 						}
 						$out .= '</div>';
 						break;
@@ -547,12 +556,16 @@ class LAFormMaker
 					}
 					$default_val = LAFormMaker::process_values($default_val, $lang_data, $filter_expressions);
 					$out .= Form::select($field_name."[]", $default_val, $default_val, $params);
+					
 					break;
 				case 'Textarea':
 					$out .= '<label for="'.$field_name.'">'.$label.$required_ast.' :</label>';
 					
-					$params['cols'] = 30;
-					$params['rows'] = 3;
+					// $params['cols'] = 30;
+					$params['rows'] = 1;
+					$params['class'] = 'form-control auto-size';
+					
+					
 					
 					if($default_val == null) {
 						$default_val = $defaultvalue;
@@ -592,7 +605,7 @@ class LAFormMaker
 					$out .= Form::text($field_name, $default_val, $params);
 					break;
 			}
-			$out .= '</div>';
+			$out .= '</div></div>';
 			return $out;
 		} else {
 			return "";
