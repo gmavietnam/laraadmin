@@ -16,12 +16,12 @@ use Dwij\Laraadmin\Models\Module;
 
 @section("main-content")
 
-<div class="box box-success">
-	<!--<div class="box-header"></div>-->
-	<div class="box-body">
+
+<div class="card">
+	<div class="card-body">
 		<table id="dt_modules" class="table table-bordered">
 		<thead>
-		<tr class="success">
+		<tr>
 			<th>ID</th>
 			<th>Name</th>
 			<th>Table</th>

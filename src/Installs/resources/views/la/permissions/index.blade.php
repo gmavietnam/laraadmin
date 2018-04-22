@@ -24,26 +24,7 @@
     </div>
 @endif
 
-<div class="box box-success">
-	<!--<div class="box-header"></div>-->
-	<div class="box-body">
-		<table id="example1" class="table table-bordered">
-		<thead>
-		<tr class="success">
-			@foreach( $listing_cols as $col )
-			<th>{{ $module->fields[$col]['label'] or ucfirst($col) }}</th>
-			@endforeach
-			@if($show_actions)
-			<th>Actions</th>
-			@endif
-		</tr>
-		</thead>
-		<tbody>
-			
-		</tbody>
-		</table>
-	</div>
-</div>
+@include('la.layouts.partials.default_list')
 
 @la_access("Permissions", "create")
 <div class="modal fade" id="AddModal" role="dialog" aria-labelledby="myModalLabel">
