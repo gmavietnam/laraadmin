@@ -71,9 +71,7 @@ $(function () {
         serverSide: true,
         ajax: "{{ url(config('laraadmin.adminRoute') . '/permission_dt_ajax') }}",
 		language: {
-			lengthMenu: "_MENU_",
-			search: "_INPUT_",
-			searchPlaceholder: "Search"
+			url: '{{ asset('la-assets/plugins/datatables/i18n/'.Auth::user()->lang.'.json') }}'
 		},
 		@if($show_actions)
 		columnDefs: [ { orderable: false, targets: [-1] }],

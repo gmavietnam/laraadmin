@@ -46,9 +46,7 @@ $(function () {
             }
 		},
 		language: {
-			lengthMenu: "_MENU_",
-			search: "_INPUT_",
-			searchPlaceholder: "{{trans('view.search')}}"
+			url: '{{ asset('la-assets/plugins/datatables/i18n/'.Auth::user()->lang.'.json') }}'
 		},
 		@if($show_actions)
 		columnDefs: [ { orderable: false, targets: [-1] }],

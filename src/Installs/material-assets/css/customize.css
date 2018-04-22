@@ -1,0 +1,36 @@
+.dataTables_wrapper .dataTables_paginate .paginate_button.previous:before,
+.dataTables_wrapper .dataTables_paginate .paginate_button.next:before{
+    content:"";
+}
+
+div.dataTables_wrapper div.dataTables_filter{
+    float:right;
+}
+
+.actions>a, .actions>li>a{
+    width: auto;
+    height: auto;
+}
+
+#sidebar{
+    /* background: url('../img/caffebg.jpg'); */
+    background-size: cover;
+    
+}
+
+[data-ma-theme=blue]{
+    background-color: #607D8B;
+}
+
+.lcb-navigation a:hover span{
+    width:100%
+}
+.lcb-navigation a[data-ma-block="#l-register"]:hover{
+    width:220px
+}
+.lcb-navigation a[data-ma-block="#l-forget-password"]:hover{
+    width:180px
+}
+.lcb-navigation a[data-ma-block="#l-login"]:hover{
+    width:85px
+}
