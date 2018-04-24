@@ -22,30 +22,29 @@
     </div>
 @endif
 
-<div class="box">
-	<div class="box-header">
-		
-	</div>
-	<div class="box-body">
-		<div class="row">
-			{!! Form::model($__singular_var__, ['route' => [config('laraadmin.adminRoute') . '.__db_table_name__.update', $__singular_var__->id ], 'method'=>'PUT', 'id' => '__singular_var__-edit-form']) !!}
-				@include('la.layouts.partials.language')
-				<div class="col-md-8 col-md-offset-2">
-						@la_form($module)
+
+@section ("form_content")
+<div class="row">
+	<div class="col-md-8 col-md-offset-2">
+		@la_form($module)
 						
-						{{--
-						__input_fields__
-						--}}
-	                    <br>
-						<div class="form-group">
-							{!! Form::submit( trans('view.update'), ['class'=>'btn btn-success']) !!} <a href="{{ url(config('laraadmin.adminRoute') . '/__db_table_name__') }}" class="btn btn-default pull-right">{{trans('view.cancel')}}</a>
-						</div>
-				</div>
-			{!! Form::close() !!}
+		{{--
+		__input_fields__
+		--}}
+		<br>
+		<div class="form-group">
+			{!! Form::submit( trans('view.update'), ['class'=>'btn btn-success']) !!} 
+			<a href="{{ url(config('laraadmin.adminRoute') . '/__db_table_name__') }}" class="btn btn-default pull-right">{{trans('view.cancel')}}</a>
 		</div>
 	</div>
 </div>
-
+@endsection
+@include('la.layouts.partials.default_edit',[
+	'form_model' => $__singular_var__,
+	'form_module_name' => '__db_table_name__',
+	'form_key_value' => $__singular_var__->id,
+	'form_action_id_tpl' => '__singular_var__-edit-form'
+])
 @endsection
 
 @push('scripts')
