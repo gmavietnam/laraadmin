@@ -965,7 +965,9 @@ class Module extends Model
 			}
 			$row = Module::processDBRow($module, $request, $row);
 			if (!empty($request->get('lang'))) {
-				$row->lang = $request->get('lang');
+				if (!in_array($module_name, ['Organizations'])) {
+					$row->lang = $request->get('lang');
+				}	
 			}
 			
 
@@ -1048,7 +1050,9 @@ class Module extends Model
 			$row = $model::find($id);
 			$row = Module::processDBRow($module, $request, $row);
 			if (!empty($request->get('lang'))) {
-				$row->lang = $request->get('lang');
+				if (!in_array($module_name, ['Organizations'])) {
+					$row->lang = $request->get('lang');
+				}	
 			}
 			$row->save();
 			return $row->id;

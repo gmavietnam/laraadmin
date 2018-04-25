@@ -765,38 +765,57 @@ class LAFormMaker
 					
 					break;
 				case 'Date':
-					$dt = strtotime($value);
-					$value = date("d M Y", $dt);
+					if (!empty($value)) {
+						$value = format_date($value);
+					}
+					
+					//$dt = strtotime($value);
+					//$value = date("d M Y", $dt);
 					break;
 				case 'Datetime':
-					$dt = strtotime($value);
-					$value = date("d M Y, h:i A", $dt);
+					if (!empty($value)) {
+						$dt = strtotime($value);
+						$value = format_datetime($value);
+
+						if ($field_name == 'start_time' || 
+							$field_name == 'end_time') {
+							$value = format_time($value);
+						}
+					}
+					
+					//$dt = strtotime($value);
+					//$value = date("d M Y, h:i A", $dt);
 					break;
 				case 'Decimal':
 					
 					break;
 				case 'Dropdown':
-					$values = LAFormMaker::process_values($fieldObj['popup_vals'], $lang, $filter_expressions);
-					if(starts_with($fieldObj['popup_vals'], "@")) {
-						if($value != 0) {
-							$moduleVal = Module::getByTable(str_replace("@", "", $fieldObj['popup_vals']));
+					if ($field_name == 'sex') {
+						$value = format_sex_type ($value, true);
+					} else {
+						$values = LAFormMaker::process_values($fieldObj['popup_vals'], $lang, $filter_expressions);
+						if(starts_with($fieldObj['popup_vals'], "@")) {
+							if($value != 0) {
+								$moduleVal = Module::getByTable(str_replace("@", "", $fieldObj['popup_vals']));
 
-							$value_label = "";
-							if (is_array($values) && array_key_exists($value, $values)) {
-								$value_label = $values[$value];
-							} else {
-								$value_label = $value;
-							}
+								$value_label = "";
+								if (is_array($values) && array_key_exists($value, $values)) {
+									$value_label = $values[$value];
+								} else {
+									$value_label = $value;
+								}
 
-							if(isset($moduleVal->id)) {
-								$value = "<a href='".url(config("laraadmin.adminRoute")."/".$moduleVal->name_db."/".$value)."' class='label label-primary'>".$value_label."</a> ";
+								if(isset($moduleVal->id)) {
+									$value = "<a href='".url(config("laraadmin.adminRoute")."/".$moduleVal->name_db."/".$value)."' class='label label-primary'>".$value_label."</a> ";
+								} else {
+									$value = "<a class='label label-primary'>".$value_label."</a> ";
+								}
 							} else {
-								$value = "<a class='label label-primary'>".$value_label."</a> ";
+								$value = "None";
 							}
-						} else {
-							$value = "None";
 						}
 					}
+					
 					break;
 				case 'Email':
 					$value = '<a href="mailto:'.$value.'">'.$value.'</a>';
@@ -863,7 +882,7 @@ class LAFormMaker
 				case 'Multiselect':
 					$valueOut = "";
 					$values = LAFormMaker::process_values($fieldObj['popup_vals'], $lang, $filter_expressions);
-					if(count($values)) {
+					if(is_array($value) && count($values)) {//fixbug null  on core
 						if(starts_with($fieldObj['popup_vals'], "@")) {
 							$moduleVal = Module::getByTable(str_replace("@", "", $fieldObj['popup_vals']));
 							$valueSel = json_decode($value);
@@ -894,7 +913,9 @@ class LAFormMaker
 					
 					break;
 				case 'String':
-					
+					if ($field_name =='color' || $field_name == 'background_color' || $field_name == 'text_color') {
+						$value = "<span class='label' style='background-color:".$value."'>".$value."</span> ";
+					} 
 					break;
 				case 'Taginput':
 					$valueOut = "";
