@@ -281,7 +281,7 @@ class LAHelper
 	}
 
 	// LAHelper::print_menu($menu)
-	public static function print_menu($menu, $active = false) {
+	public static function print_menu($menu, /*$active = false,*/ $module = null) {
 		$childrens = \Dwij\Laraadmin\Models\Menu::where("parent", $menu->id)->orderBy('hierarchy', 'asc')->get();
 
 
@@ -301,29 +301,34 @@ class LAHelper
 		}
 
 		$active_str = '';
-		if($active) {
+		// if($active) {
+		if(isset($module->id) && $module->name == $menu->name){
 			$active_str = 'class="active"';
 		}
 		
-		$str = '<li'.$treeview.' '.$active_str.'><a href="'.$href.'" '.$aElement.'><i class="fa '.$menu->icon.'"></i> <span>'.trans('menu.'.LAHelper::real_module_name($menu->name)).'</span> </a>';
 		
+		$str = '';
 		$countMenuAccess = 0;
-
+		// $isActive = false;
+		// dd($module);
 		if(count($childrens)) {
 			$str .= '<ul>';
 			foreach($childrens as $children) {
 				if ($children->type == "module" && Module::hasAccess($children->name, "view")) {
 					if ($children->name != "Employees" || 
 							($children->name == "Employees" && Entrust::hasRole('SUPER_ADMIN'))) {
-						$str .= LAHelper::print_menu($children);
+						$str .= LAHelper::print_menu($children,$module);
 					}
 				} else if ($children->type == "custom") {
 					$split_url = explode("/", $children->url);
 					if ($split_url > 0 ) {
 						if (Module::hasAccess($split_url[0], "view")) {
-							$str .= LAHelper::print_menu($children);
+							$str .= LAHelper::print_menu($children,$module);
 						}
 					}
+				}
+				if(isset($module->id) && $module->name == $children->name){
+					$active_str = 'class="active"';
 				}
 				$countMenuAccess +=1;
 			}
@@ -331,6 +336,15 @@ class LAHelper
 		}
 
 		$str .= '</li>';
+
+		if($treeview && $active_str)
+		{
+			$treeview = ' class="sub-menu toggled active" ';
+			
+		}
+
+		$str = '<li'.$treeview.' '.$active_str.'><a href="'.$href.'" '.$aElement.'><i class="fa '.$menu->icon.'"></i> <span>'.trans('menu.'.LAHelper::real_module_name($menu->name)).'</span> </a>'.$str;
+		
 		
 		return $str;
 	}
