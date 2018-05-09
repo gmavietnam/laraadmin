@@ -49,7 +49,12 @@ class LAFormMaker
 			
 			$field_type = ModuleFieldTypes::find($field_type);
 			
-			$out = '<div class="form-group"><div class="fg-line">';
+			$out = '<div class="form-group">';
+			if($field_type->name != 'Checkbox')
+			{
+				$out .= '<div class="fg-line">';
+			}
+
 			$required_ast = "";
 			
 			if(!isset($params['class'])) {
@@ -103,13 +108,20 @@ class LAFormMaker
 					$out .= Form::textarea($field_name, $default_val, $params);
 					break;
 				case 'Checkbox':
-					$out .= '<label for="'.$field_name.'">'.$label.$required_ast.' :</label>';
-					$out .= '<input type="hidden" value="false" name="'.$field_name.'_hidden">';
+
 					
+					// $out .= '<label for="'.$field_name.'">'.$label.$required_ast.' :</label>';
+					// $out .= '<input type="hidden" value="false" name="'.$field_name.'_hidden">';
+					
+					$out .= '<div class="toggle-switch">
+						<label for="'.$field_name.'" class="ts-label">'.$label.$required_ast.'</label>';
+						
+
+
 					// ############### Remaining
 					unset($params['placeholder']);
 					unset($params['data-rule-maxlength']);
-					
+					$params['id'] = $field_name;
 					if($default_val == null) {
 						$default_val = $defaultvalue;
 					}
@@ -119,7 +131,11 @@ class LAFormMaker
 					}
 					
 					$out .= Form::checkbox($field_name, $field_name, $default_val, $params);
-					$out .= '<div class="Switch Round On" style="vertical-align:top;margin-left:10px;"><div class="Toggle"></div></div>';
+
+					$out .='<label for="'.$field_name.'" class="ts-helper"></label>
+					</div>';
+					//$out .= '<div class="Switch Round On" style="vertical-align:top;margin-left:10px;"><div class="Toggle"></div></div>';
+
 					break;
 				case 'Currency':
 					$out .= '<label for="'.$field_name.'">'.$label.$required_ast.' :</label>';
@@ -524,6 +540,40 @@ class LAFormMaker
 					$out .= Form::text($field_name, $default_val, $params);
 					break;
 				case 'Taginput':
+					// $out .= '<label for="'.$field_name.'">'.$label.$required_ast.' :</label>';
+					
+					// if(isset($params['data-rule-maxlength'])) {
+					// 	$params['maximumSelectionLength'] = $params['data-rule-maxlength'];
+					// 	unset($params['data-rule-maxlength']);
+					// }
+					// $params['multiple'] = "true";
+					// $params['rel'] = "taginput";
+					// $params['data-placeholder'] = "Add multiple ".str_plural($label);
+					// unset($params['placeholder']);
+					
+					// // Override the edit value
+					// if(isset($row) && isset($row->$field_name)) {
+					// 	$default_val = json_decode($row->$field_name);
+					// }
+					
+					// if($default_val == null) {
+					// 	$defaultvalue2 = json_decode($defaultvalue);
+					// 	if(is_array($defaultvalue2)) {
+					// 		$default_val = $defaultvalue;
+					// 	} else if(is_string($defaultvalue)) {
+					// 		if (strpos($defaultvalue, ',') !== false) {
+					// 			$default_val = array_map('trim', explode(",", $defaultvalue));
+					// 		} else {
+					// 			$default_val = [$defaultvalue];
+					// 		}
+					// 	} else {
+					// 		$default_val = array();
+					// 	}
+					// }
+					// $default_val = LAFormMaker::process_values($default_val, $lang_data, $filter_expressions);
+					// $out .= Form::select($field_name."[]", $default_val, $default_val, $params);
+					
+					// break;
 					$out .= '<label for="'.$field_name.'">'.$label.$required_ast.' :</label>';
 					
 					if(isset($params['data-rule-maxlength'])) {
@@ -555,7 +605,9 @@ class LAFormMaker
 						}
 					}
 					$default_val = LAFormMaker::process_values($default_val, $lang_data, $filter_expressions);
-					$out .= Form::select($field_name."[]", $default_val, $default_val, $params);
+					//$out .= Form::select($field_name."[]", $default_val, $default_val, $params);
+
+					$out .= '<input type="text" value="'.implode(',',$default_val).'" data-role="materialtags" />';
 					
 					break;
 				case 'Textarea':
@@ -605,7 +657,11 @@ class LAFormMaker
 					$out .= Form::text($field_name, $default_val, $params);
 					break;
 			}
-			$out .= '</div></div>';
+			if($field_type->name != 'Checkbox')
+			{
+				$out .= '</div>';
+			}
+			$out .= '</div>';
 			return $out;
 		} else {
 			return "";
@@ -765,57 +821,38 @@ class LAFormMaker
 					
 					break;
 				case 'Date':
-					if (!empty($value)) {
-						$value = format_date($value);
-					}
-					
-					//$dt = strtotime($value);
-					//$value = date("d M Y", $dt);
+					$dt = strtotime($value);
+					$value = date("d M Y", $dt);
 					break;
 				case 'Datetime':
-					if (!empty($value)) {
-						$dt = strtotime($value);
-						$value = format_datetime($value);
-
-						if ($field_name == 'start_time' || 
-							$field_name == 'end_time') {
-							$value = format_time($value);
-						}
-					}
-					
-					//$dt = strtotime($value);
-					//$value = date("d M Y, h:i A", $dt);
+					$dt = strtotime($value);
+					$value = date("d M Y, h:i A", $dt);
 					break;
 				case 'Decimal':
 					
 					break;
 				case 'Dropdown':
-					if ($field_name == 'sex') {
-						$value = format_sex_type ($value, true);
-					} else {
-						$values = LAFormMaker::process_values($fieldObj['popup_vals'], $lang, $filter_expressions);
-						if(starts_with($fieldObj['popup_vals'], "@")) {
-							if($value != 0) {
-								$moduleVal = Module::getByTable(str_replace("@", "", $fieldObj['popup_vals']));
+					$values = LAFormMaker::process_values($fieldObj['popup_vals'], $lang, $filter_expressions);
+					if(starts_with($fieldObj['popup_vals'], "@")) {
+						if($value != 0) {
+							$moduleVal = Module::getByTable(str_replace("@", "", $fieldObj['popup_vals']));
 
-								$value_label = "";
-								if (is_array($values) && array_key_exists($value, $values)) {
-									$value_label = $values[$value];
-								} else {
-									$value_label = $value;
-								}
-
-								if(isset($moduleVal->id)) {
-									$value = "<a href='".url(config("laraadmin.adminRoute")."/".$moduleVal->name_db."/".$value)."' class='label label-primary'>".$value_label."</a> ";
-								} else {
-									$value = "<a class='label label-primary'>".$value_label."</a> ";
-								}
+							$value_label = "";
+							if (is_array($values) && array_key_exists($value, $values)) {
+								$value_label = $values[$value];
 							} else {
-								$value = "None";
+								$value_label = $value;
 							}
+
+							if(isset($moduleVal->id)) {
+								$value = "<a href='".url(config("laraadmin.adminRoute")."/".$moduleVal->name_db."/".$value)."' class='label label-primary'>".$value_label."</a> ";
+							} else {
+								$value = "<a class='label label-primary'>".$value_label."</a> ";
+							}
+						} else {
+							$value = "None";
 						}
 					}
-					
 					break;
 				case 'Email':
 					$value = '<a href="mailto:'.$value.'">'.$value.'</a>';
@@ -882,7 +919,7 @@ class LAFormMaker
 				case 'Multiselect':
 					$valueOut = "";
 					$values = LAFormMaker::process_values($fieldObj['popup_vals'], $lang, $filter_expressions);
-					if(is_array($value) && count($values)) {//fixbug null  on core
+					if(count($values)) {
 						if(starts_with($fieldObj['popup_vals'], "@")) {
 							$moduleVal = Module::getByTable(str_replace("@", "", $fieldObj['popup_vals']));
 							$valueSel = json_decode($value);
@@ -913,9 +950,7 @@ class LAFormMaker
 					
 					break;
 				case 'String':
-					if ($field_name =='color' || $field_name == 'background_color' || $field_name == 'text_color') {
-						$value = "<span class='label' style='background-color:".$value."'>".$value."</span> ";
-					} 
+					
 					break;
 				case 'Taginput':
 					$valueOut = "";
