@@ -180,6 +180,27 @@ class LAFormMaker
 					$out .= "<span class='input-group-addon'><span class='fa fa-calendar'></span></span></div>";
 					// $out .= Form::date($field_name, $default_val, $params);
 					break;
+				case 'Time':
+					$out .= '<label for="'.$field_name.'">'.$label.$required_ast.' :</label>';
+					
+					if($default_val == null) {
+						$default_val = $defaultvalue;
+					}
+					// Override the edit value
+					if(isset($row) && isset($row->$field_name)) {
+						$default_val = $row->$field_name;
+					}
+					
+					// ############### Remaining
+					$dval = $default_val;
+					if($default_val != "") {
+						$dval = date("h:i A", strtotime($default_val));
+					}
+					$out .= "<div class='input-group dtp-container'>";
+					$params['class'] = 'form-control time-picker';
+					$out .= Form::text($field_name, $dval, $params);
+					$out .= "<span class='input-group-addon'><span class='zmdi zmdi-time'></span></span></div>";
+					break;
 				case 'Datetime':
 					$out .= '<label for="'.$field_name.'">'.$label.$required_ast.' :</label>';
 					
@@ -827,6 +848,10 @@ class LAFormMaker
 				case 'Datetime':
 					$dt = strtotime($value);
 					$value = date("d M Y, h:i A", $dt);
+					break;
+				case 'Time':
+					$dt = strtotime($value);
+					$value = date("h:i A", $dt);
 					break;
 				case 'Decimal':
 					
