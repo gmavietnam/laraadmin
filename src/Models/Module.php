@@ -260,6 +260,7 @@ class Module extends Model
 				}
 				break;
 			case 'Datetime':
+			case 'Time':
 				if($update) {
 					// Timestamp Edit Not working - http://stackoverflow.com/questions/34774628/how-do-i-make-doctrine-support-timestamp-columns
 					// Error Unknown column type "timestamp" requested. Any Doctrine type that you use has to be registered with \Doctrine\DBAL\Types\Type::addType()
@@ -696,6 +697,18 @@ class Module extends Model
 					$var->default("");
 				}
 				break;
+			case 'Time':
+				if($update) {
+					$var = $table->date($field->colname)->change();
+				} else {
+					$var = $table->date($field->colname);
+				}
+				if($field->defaultvalue != "" && !starts_with($field->defaultvalue, "time")) {
+					$var->default($field->defaultvalue);
+				} else if($field->required) {
+					$var->default("1970-01-01");
+				}
+			break;
 		}
 		
 		// set column unique
@@ -1146,6 +1159,15 @@ class Module extends Model
 						}
 						$row->{$field['colname']} = json_encode($files2);
 						break;
+					case 'Files':
+						$files = json_decode($request->{$field['colname']});
+						$files2 = array();
+						foreach ($files as $file) {
+							$files2[] = "".$file;
+						}
+						$row->{$field['colname']} = json_encode($files2);
+						break;
+
 					default:
 						$row->{$field['colname']} = $request->{$field['colname']};
 						break;
