@@ -1123,7 +1123,11 @@ class Module extends Model
 							$columnWithoutId = rtrim($field['colname'],"_id");
 							$elementValue = "";
 							$elementValue = ModuleFields::getFieldValueByPopupVals($field["popup_vals"], $request->{$field['colname']}, "value");
-							$row->{$columnWithoutId} = $elementValue;
+							if (function_exists('mong_id')) {
+								$row->{$columnWithoutId} = mong_id($elementValue);
+							} else {
+								$row->{$columnWithoutId} = $elementValue;
+							}
 						}
 						
 						break;
@@ -1167,6 +1171,27 @@ class Module extends Model
 						}
 						$row->{$field['colname']} = json_encode($files2);
 						break;
+					case 'Integer':
+						if (empty($request->{$field['colname']})) {
+							$row->{$field['colname']} = $request->{$field['colname']};
+						} else {
+							$row->{$field['colname']} = (int)($request->{$field['colname']});
+						}
+					break;
+					case 'Decimal':
+							if (empty($request->{$field['colname']})) {
+								$row->{$field['colname']} = $request->{$field['colname']};
+							} else {
+								$row->{$field['colname']} = (float)($request->{$field['colname']});
+							}
+					break;
+					case 'Currency':
+							if (empty($request->{$field['colname']})) {
+								$row->{$field['colname']} = $request->{$field['colname']};
+							} else {
+								$row->{$field['colname']} = (float)($request->{$field['colname']});
+							}
+					break;
 
 					default:
 						$row->{$field['colname']} = $request->{$field['colname']};
