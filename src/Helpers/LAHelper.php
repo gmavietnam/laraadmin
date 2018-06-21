@@ -301,10 +301,20 @@ class LAHelper
 		}
 
 		$active_str = '';
-		// if($active) {
-		if(isset($module->id) && $module->name == $menu->name){
+		
+		// echo 'menu url:'.$menu->url. ' | ';
+		// echo 'menu url:'.$_SERVER['REQUEST_URI']."\r\n";
+		// echo 'pos menu:'.strpos($_SERVER['REQUEST_URI'],$menu->url)."\r\n";
+		// echo '----------';
+		if($_SERVER['REQUEST_URI']=='/admin/'.$menu->url)
+		{
 			$active_str = 'class="active"';
+			
 		}
+		// elseif(isset($module->id) && $module->name == $menu->name){
+			
+		// 	$active_str = 'class="active"';
+		// }
 		
 		
 		$str = '';
@@ -312,8 +322,19 @@ class LAHelper
 		// $isActive = false;
 		// dd($module);
 		if(count($childrens)) {
+			
 			$str .= '<ul>';
 			foreach($childrens as $children) {
+				if($_SERVER['REQUEST_URI']=='/admin/'.$children->url)
+				{
+					$active_str = 'class="active"';
+				}
+				// elseif(isset($module->id) && $module->name == $children->name){
+				// 	$active_str = 'class="active"';
+				// }
+				
+
+
 				if ($children->type == "module" && Module::hasAccess($children->name, "view")) {
 					if ($children->name != "Employees" || 
 							($children->name == "Employees" && Entrust::hasRole('SUPER_ADMIN'))) {
@@ -327,9 +348,7 @@ class LAHelper
 						}
 					}
 				}
-				if(isset($module->id) && $module->name == $children->name){
-					$active_str = 'class="active"';
-				}
+				
 				$countMenuAccess +=1;
 			}
 			$str .= '</ul>';
