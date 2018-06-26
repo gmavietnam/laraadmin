@@ -7,7 +7,7 @@ use Log;
 
 use Dwij\Laraadmin\Models\Module;
 use Zizaco\Entrust\EntrustFacade as Entrust;
-
+use Auth;
 
 class LAHelper
 {
@@ -341,12 +341,25 @@ class LAHelper
 						$str .= LAHelper::print_menu($children,$module);
 					}
 				} else if ($children->type == "custom") {
-					$split_url = explode("/", $children->url);
-					if ($split_url > 0 ) {
-						if (Module::hasAccess($split_url[0], "view")) {
-							$str .= LAHelper::print_menu($children,$module);
+					$user = Auth::user();
+			        $roles = $user->roles()->get();
+			        $not_permission = false;
+			        if(count($roles)>0) {
+			            foreach($roles as $key => $role) {
+			                // echo $role->name;
+			                if(disable_url_menu_by_role($children->url, $role->name)) {
+			                    $not_permission = true;
+			                }
+			            }
+			        }
+			        if(!$not_permission) {
+			        	$split_url = explode("/", $children->url);
+						if ($split_url > 0 ) {
+							if (Module::hasAccess($split_url[0], "view")) {
+								$str .= LAHelper::print_menu($children,$module);
+							}
 						}
-					}
+			        }
 				}
 				
 				$countMenuAccess +=1;
