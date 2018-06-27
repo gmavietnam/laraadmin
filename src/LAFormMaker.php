@@ -870,9 +870,11 @@ class LAFormMaker
 							}
 
 							if(isset($moduleVal->id)) {
-								$value = "<a href='".url(config("laraadmin.adminRoute")."/".$moduleVal->name_db."/".$value)."' class='label label-primary'>".$value_label."</a> ";
+								//$value = "<a href='".url(config("laraadmin.adminRoute")."/".$moduleVal->name_db."/".$value)."' class='label label-primary'>".$value_label."</a> ";
+								$value = $value_label;
 							} else {
-								$value = "<a class='label label-primary'>".$value_label."</a> ";
+								$value = $value_label;
+								//$value = "<a class='label label-primary'>".$value_label."</a> ";
 							}
 						} else {
 							$value = "None";
@@ -986,7 +988,8 @@ class LAFormMaker
 							$valueSel = json_decode($value);
 							foreach ($values as $key => $val) {
 								if(in_array($key, $valueSel)) {
-									$valueOut .= "<a href='".url(config("laraadmin.adminRoute")."/".$moduleVal->name_db."/".$key)."' class='label label-primary'>".$val."</a> ";
+									//$valueOut .= "<a href='".url(config("laraadmin.adminRoute")."/".$moduleVal->name_db."/".$key)."' class='label label-primary'>".$val."</a> ";
+									$value .=  "<span class='label label-primary'>".$value_label."</span> ";;
 								}
 							}
 						} else {
